@@ -5,6 +5,7 @@ import player
 import board
 from config import BLACK, WHITE, HUMAN
 
+# The main class that encapsulates the Othello game's initialization, gameplay loop, and restart functionality.
 class Othello:
     """Game main class."""
 
@@ -13,6 +14,7 @@ class Othello:
         self.board = board.Board()
         self.gui.show_menu(self.start)
 
+# initializes the game with the provided arguments:
     def start(self, *args):
         player1, player2, level = args
 
@@ -30,9 +32,11 @@ class Othello:
 
         self.gui.update(self.board.board, 2, 2, self.other_player.color)
 
+# clock: A pygame object that controls the frame rate, ensuring the game loop runs smoothly (at 60 FPS).
     def run(self):
         clock = pygame.time.Clock()
         while True:
+            # Limits the loop to run 60 times per second.
             clock.tick(60)
             # game end then set winner
             if self.board.game_ended():
@@ -49,8 +53,12 @@ class Othello:
             valid_moves = self.board.get_valid_moves(self.now_playing.color)
 
             if valid_moves != []:
+                # Executes a move (human input or computer calculation). Updates the board state and score.
                 score, self.board = self.now_playing.get_move()
+
+                # Counts the stones after the move.
                 whites, blacks, empty = self.board.count_stones()
+                # Updates the GUI with the new board state and scores.
                 self.gui.update(self.board.board, blacks, whites,
                                 self.now_playing.color)
 

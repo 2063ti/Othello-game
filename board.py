@@ -2,7 +2,11 @@
 from config import WHITE, BLACK, EMPTY
 from copy import deepcopy
 
+
+# Defines the Board class, which represents the game state and contains methods 
+# to handle game logic, such as valid moves, board updates, and game status.
 class Board:
+# Initializes the board and its default state.
 
     """ Rules of the game """
     def __init__(self):
@@ -20,9 +24,11 @@ class Board:
         self.board[4][4] = WHITE
         self.valid_moves = []
 
+# Allows accessing a specific position on the board using board[i, j] syntax.
     def __getitem__(self, i, j):
         return self.board[i][j]
 
+#  lookup and Finds valid positions to place a piece of the given color starting from (row, column).
     def lookup(self, row, column, color):
 
         if color == BLACK:
@@ -46,13 +52,17 @@ class Board:
             (1, 0),      
             (-1, 0),     
         ]
+# Collects all valid positions and returns them as a list
         for (x, y) in directions:
             pos = self.check_direction(row, column, x, y, other)
             if pos:
                 places.append(pos)
         return places
 
+# Checks in a specific direction if a move can flip opponent's pieces.
     def check_direction(self, row, column, row_add, column_add, other_color):
+
+# Directional increments for row and column.
         i = row + row_add
         j = column + column_add
         if (i >= 0 and j >= 0 and i < 8 and j < 8 and self.board[i][j] == other_color):
@@ -64,6 +74,7 @@ class Board:
             if (i >= 0 and j >= 0 and i < 8 and j < 8 and self.board[i][j] == EMPTY):                
                 return (i, j)
 
+#  Identifies all valid moves for a player of the given color.
     def get_valid_moves(self, color):
 
         if color == BLACK:
@@ -72,22 +83,27 @@ class Board:
             other = BLACK
 
         places = []
-
+    # Iterate through the board to find all positions of the given color.
         for i in range(8):
             for j in range(8):
                 if self.board[i][j] == color:
+                    # Look up valid moves from the current position and add them to the list.
                     places = places + self.lookup(i, j, color)
 
+    # Remove duplicate positions and update the valid moves.
         places = list(set(places))
         self.valid_moves = places
         return places
 
+# Applies a move to the board and flips opponent's pieces.
     def apply_move(self, move, color):
 
         if move in self.valid_moves:
             self.board[move[0]][move[1]] = color
             for i in range(1, 9):
                 self.flip(i, move, color)
+
+# Flips opponent's pieces in a specific direction after a valid move.
 
     def flip(self, direction, position, color):
 
@@ -149,8 +165,9 @@ class Board:
                     # flips
                     self.board[pos[0]][pos[1]] = color
 
+
     def get_changes(self):
-        """ Return black and white counters. """
+        """ Return the current board state , black and white counters. """
 
         whites, blacks, empty = self.count_stones()
 
@@ -185,6 +202,7 @@ class Board:
                     empty += 1
         return whites, blacks, empty
 
+#  Compares two boards and highlights the differences.
     def compare(self, otherBoard):
         """Return a board containing only the squares that are empty in one
         of the boards and not empty on the other."""
@@ -193,16 +211,21 @@ class Board:
         diffBoard.board[3][3] = 0
         diffBoard.board[4][3] = 0
         diffBoard.board[4][4] = 0
+
+# Creates a new board showing only the positions where the two boards differ.
         for i in range(8):
             for j in range(8):
                 if otherBoard.board[i][j] != self.board[i][j]:
                     diffBoard.board[i][j] = otherBoard.board[i][j]
         return otherBoard
 
+# Counts empty spaces adjacent to the player's pieces.
     def get_adjacent_count(self, color):
         """Return how many empty squares there are on the board adjacent to
         the specified color."""
         adjCount = 0
+
+# For each piece of the specified color, checks the surrounding 8 squares for empty spaces.
         for x, y in [(a, b) for a in range(8) for b in range(8) if self.board[a][b] == color]:
             for i, j in [(a, b) for a in [-1, 0, 1] for b in [-1, 0, 1]]:
                 if 0 <= x + i <= 7 and 0 <= y + j <= 7:
@@ -210,6 +233,7 @@ class Board:
                         adjCount += 1
         return adjCount
 
+# Generates all possible board states resulting from valid moves for the given color.
     def next_states(self, color):
         """Given a player's color return all the boards resulting from moves
         that this player cand do. It's implemented as an iterator."""
