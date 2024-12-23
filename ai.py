@@ -10,7 +10,7 @@ class AI(object):
         player - current player's color opponent - opponent's color"""
         self.heuristic_eval = heuristic_eval
 
-    # error: always return the same board in same cases
+  
     def alphaBeta(self, board, parentBoard, depth, player, opponent,
                 alfa=-INFINITY, beta=INFINITY):
         
